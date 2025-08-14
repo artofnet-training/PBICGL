@@ -1,0 +1,48 @@
+//Crée la table calendrier
+(StartDate as date, EndDate as date) =>
+
+let
+    //Définir les dates de début et de fin de calendrier (du 1er janvier au 31 décembre)
+    StartDate = #date(Date.Year(StartDate), Date.Month(StartDate), 
+    Date.Day(StartDate)),
+    EndDate = #date(Date.Year(EndDate), Date.Month(EndDate), 
+    Date.Day(EndDate)),
+
+    //Déterminer le nombre de dates nécessaires pour le calendrier
+    GetDateCount = Duration.Days(EndDate - StartDate),
+
+    //Transformer les dates en une liste
+    GetDateList = List.Dates(StartDate, GetDateCount, 
+    #duration(1,0,0,0)),
+
+    //Convertir la liste en table
+    DateListToTable = Table.FromList(GetDateList, 
+    Splitter.SplitByNothing(), {"Date"}, null, ExtraValues.Error),
+
+    //Créer de nouvelles colonnes depuis la colonne date
+    //Ajouter l'année seule
+    YearNumber = Table.AddColumn(DateListToTable, "Année", 
+    each Date.Year([Date])),
+
+    //Ajouter le trimestre
+    QuarterNumber = Table.AddColumn(YearNumber , "Trimestre", 
+    each "T" & Number.ToText(Date.QuarterOfYear([Date]))),
+
+    //Ajouter le numéro de la semaine
+    WeekNumber= Table.AddColumn(QuarterNumber , "Numéro de semaine", 
+    each Date.WeekOfYear([Date])),
+
+    //Ajouter le numéro du mois
+    MonthNumber = Table.AddColumn(WeekNumber, "Numéro du mois", 
+    each Date.Month([Date])),
+
+    //Ajouter le nom du mois
+    MonthName = Table.AddColumn(MonthNumber , "Mois", 
+    each Date.ToText([Date],"MMMM")),
+
+    //Ajouter le nom du jour de la semaine
+    DayOfWeek = Table.AddColumn(MonthName , "Jour de la semaine", 
+    each Date.ToText([Date],"dddd"))
+
+in
+    DayOfWeek
