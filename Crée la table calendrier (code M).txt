@@ -41,8 +41,8 @@ let
     each Date.ToText([Date],"MMMM")),
 
     // Ajouter l'initiale du mois
-    MonthInitial = Table.AddColumn(AddMonthName, "Initiale Mois", 
-    each Text.Start([MonthName], 1), type text)
+    MonthInitial = Table.AddColumn(MonthName, "Initiale Mois", 
+    each Text.Start([MonthName], 1), type text),
 
 
     //Ajouter le nom du jour de la semaine
@@ -52,3 +52,4 @@ let
 in
 
     DayOfWeek
+
